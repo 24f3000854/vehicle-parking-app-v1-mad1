@@ -15,9 +15,14 @@
 #form-body{
     width: 350px;
     height: 350px;
-    border: 5px solid black;
+    border: 5px solid blue;
     margin: auto;
     margin-top: 150px;
     padding: 15px;
     border-radius: 25px;
+}
+.headings{
+    border: 4px solid black;
+    border-radius: 20px;
+    margin: 25px;
 }
