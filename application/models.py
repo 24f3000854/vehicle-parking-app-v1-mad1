@@ -2,12 +2,17 @@ from .database import db
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(), unique=True, nullable=False)
+    first_name = db.Column(db.String(), nullable=False)
+    last_name = db.Column(db.String(), nullable=False)
     email = db.Column(db.String(), unique=True, nullable=False)
-    password = db.Column(db.String(), nullable=False)
+    pwd = db.Column(db.String(), nullable=False)
+    vehicle_reg = db.Column(db.String(), nullable=False)
+    pincode = db.Column(db.String(), nullable=False)
+    phone_number = db.Column(db.String(), nullable=False)
+    gender = db.Column(db.String())
+    age = db.Column(db.Integer)
     type = db.Column(db.String(), default='general')
     reservations = db.relationship('Reservation', backref='user') 
-
 
 class ParkingLot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -17,7 +22,6 @@ class ParkingLot(db.Model):
     pin_code = db.Column(db.String(), nullable=False)
     max_spots = db.Column(db.Integer, nullable=False)
     spots = db.relationship('ParkingSpot', backref='lot')
-
 
 class ParkingSpot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
