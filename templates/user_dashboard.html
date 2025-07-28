@@ -41,31 +41,39 @@
                                 <th scope="col">Location</th>
                                 <th scope="col">Vehicle Number</th>
                                 <th scope="col">Timestamp</th>
+                                <th scope="col">Status</th>
                                 <th scope="col" class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">120</th>
-                                <td>XXXXXX</td>
-                                <td>TN318888</td>
-                                <td>XX-XX-XX</td>
-                                <td class="d-flex justify-content-center">
-                                    <a href="release_spot.html" class="btn btn-primary mx-2">Release</a>
-                                    <a href="#" class="btn btn-success">Parked Out</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">142</th>
-                                
-                                <td>XXXXXX</td>
-                                <td>AP317212</td>
-                                <td>XX-XX-XX</td>
-                                <td class="d-flex justify-content-center">
-                                    <a href="release_spot.html" class="btn btn-primary mx-2">Release</a>
-                                    <a href="#" class="btn btn-success">Parked Out</a>
-                                </td>
-                            </tr>
+                            {% if reservations %}
+                                {% for reservation in reservations %}
+                                <tr>
+                                    <th scope="row">{{ reservation.id }}</th>
+                                    <td>{{ reservation.location }}</td>
+                                    <td>{{ reservation.vehicle_number }}</td>
+                                    <td>{{ reservation.timestamp }}</td>
+                                    <td>
+                                        {% if reservation.status == 'Active' %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Completed</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="d-flex justify-content-center">
+                                        {% if reservation.status == 'Active' %}
+                                            <a href="/release-spot/{{ this_user.id }}/{{ reservation.id }}" class="btn btn-warning mx-2">Release</a>
+                                        {% else %}
+                                            <span class="text-muted">Completed</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center">No parking history found</td>
+                                </tr>
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>
@@ -75,35 +83,49 @@
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
 
-                <h3 class="headings text-center">Parking Lots @ Dadar Road</h3>
+                <h3 class="headings text-center">Parking Lots near you</h3>
                 <div id="table">
                     <table class="table border">
                         <thead>
                             <tr>
-                                <th scope="col">ID</th>
+                                <th scope="col">Lot ID</th>
+                                <th scope="col">Location</th>
                                 <th scope="col">Address</th>
-                                <th scope="col">Availability</th>
+                                <th scope="col">Available Spots</th>
+                                <th scope="col">Price/Hour</th>
                                 <th scope="col" class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">132</th>
-                                <td>K. Gadgil Marg, XXXX</td>
-                                <td>6</td>
-                                <td class="d-flex justify-content-center">
-                                    <a href="book_spot.html" class="btn btn-primary mx-2">Book</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">136</th>
-                                <td>Wadala, XXXX</td>
-                                <td>10</td>
-                                <td class="d-flex justify-content-center">
-                                    <a href="book_spot.html" class="btn btn-primary mx-2">Book</a>
-                                </td>
-                            </tr>
-                        </tbody>
+                            {% if parking_lots %}
+                                {% for lot in parking_lots %}
+                                <tr>
+                                    <th scope="row">{{ lot.id }}</th>
+                                    <td>{{ lot.prime_location_name }}</td>
+                                    <td>{{ lot.address }}</td>
+                                    <td>
+                                        {% if lot.available_spots > 0 %}
+                                            <span class="badge bg-success">{{ lot.available_spots }}/{{ lot.total_spots }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Full</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>₹{{ lot.price }}</td>
+                                    <td class="d-flex justify-content-center">
+                                        {% if lot.available_spots > 0 %}
+                                            <a href="/book-spot/{{ this_user.id }}/{{ lot.id }}" class="btn btn-primary mx-2">Book</a>
+                                        {% else %}
+                                            <button class="btn btn-secondary mx-2" disabled>Full</button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center">No parking lots found in your pincode ({{ this_user.pincode }})</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>                        
                     </table>
                 </div>
             </div>

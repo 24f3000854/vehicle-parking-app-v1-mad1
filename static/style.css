@@ -27,3 +27,34 @@
     border-radius: 20px;
     margin: 25px;
 }
+
+
+
+.slot {
+    width: 30px;
+    height: 30px;
+    border: 2px solid #007BFF;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+}
+.available {
+    background-color: #b4f1b4;
+}
+.occupied {
+    background-color: #f8bcbc;
+}
+
+
+.spot-box {
+    width: 25px;
+    height: 35px;
+    text-align: center;
+    line-height: 35px;
+    margin: 4px;
+    font-weight: bold;
+    border: 2px solid #007bff;
+    border-radius: 6px;
+    font-family: monospace;
+}

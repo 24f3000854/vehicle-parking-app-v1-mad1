@@ -47,11 +47,16 @@
                 <div class="col">
                     <label for="confirmEmail" class="form-label">Confirm Email Address*</label>
                     <input type="text" class="form-control" id="confirmEmail" name="confirm_email" required />
-                    </div>
+                </div>
             </div>  
             <div class="mb-3">
                 <label for="vehicleReg" class="form-label">Vehicle Registration Number*</label>
                 <input type="text" class="form-control" id="vehicleReg" placeholder="TN01AB1234" name="vehicle_reg" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="address" class="form-label">Address*</label>
+                <input type="text" class="form-control" id="address" name="address" placeholder="D-56, 4th main, Anna Nagar" required/>
             </div>
 
             <div class="mb-3">
@@ -61,20 +66,8 @@
 
             <div class="mb-3">
                 <label for="phone" class="form-label">Phone Number*</label>
-                <input type="tel" class="form-control" id="phone" placeholder="e.g., +91-1234567890" pattern="^\+91\d{10}$" name="phone_number" required />
+                <input type="tel" class="form-control" id="phone" placeholder="e.g., 9876543210" name="phone_number" required />
             </div>
-
-            <!-- <div class="mb-3">
-                <label class="form-label">Preferred Mode of Communication</label><br />
-                <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="communication" id="emailComm" value="email" />
-                <label class="form-check-label" for="emailComm">Email</label>
-                </div>
-                <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="communication" id="emailSmsComm" value="email_sms" />
-                <label class="form-check-label" for="emailSmsComm">Email & SMS</label>
-                </div>
-            </div> -->
 
             <div class="row mb-3">
                 <div class="col">

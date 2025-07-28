@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Releae Parking Spot</title>
+    <title>Release Parking Spot</title>
     <link rel="stylesheet" href="../static/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <style>
@@ -19,36 +19,49 @@
 <body>
     <div id="main">
         <div id="canvas">
-
             <div id="content">
-                <h3 class="headings text-center">Release the Parking Spot</h3>
+                <h3 class="headings text-center">Release Parking Spot</h3>
+                
+                <form action="/release-spot/{{this_user.id}}/{{reservation.id}}" method="POST">
                     <div id="form-body">
                         <div class="mb-3">
                             <label for="spot-id" class="form-label">Spot ID:</label>
-                            <input type="text" class="form-control" id="spot-id" placeholder="name@example.com">
+                            <input type="text" class="form-control" id="spot-id" value="{{spot.id}}" readonly>
                         </div>
+                        
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location:</label>
+                            <input type="text" class="form-control" id="location" value="{{lot.prime_location_name}}" readonly>
+                        </div>
+                        
                         <div class="mb-3">
                             <label for="vehicle-num" class="form-label">Vehicle Number:</label>
-                            <input type="text" class="form-control" id="spot-id" placeholder="name@example.com">
+                            <input type="text" class="form-control" id="vehicle-num" value="{{this_user.vehicle_reg}}" readonly>
                         </div>
+                        
                         <div class="mb-3">
                             <label for="park-time" class="form-label">Parking Time:</label>
-                            <input type="time" class="form-control" id="park-time" placeholder="name@example.com">
+                            <input type="text" class="form-control" id="park-time" value="{{reservation.parking_timestamp.strftime('%Y-%m-%d %H:%M')}}" readonly>
                         </div>
+                        
                         <div class="mb-3">
-                            <label for="release-time" class="form-label">Release Time:</label>
-                            <input type="time" class="form-control" id="release-time" placeholder="name@example.com">
+                            <label for="hours-parked" class="form-label">Hours Parked:</label>
+                            <input type="text" class="form-control" id="hours-parked" value="{{hours_parked}} hours" readonly>
                         </div>
+                        
                         <div class="mb-3">
                             <label for="total-cost" class="form-label">Total Cost:</label>
-                            <input type="text" class="form-control" id="total-cost" placeholder="name@example.com">
+                            <input type="text" class="form-control" id="total-cost" value="₹{{total_cost}}" readonly>
                         </div>
+                        
                         <div class="text-center">
-                            <input type="submit" class="btn btn-primary" value="Release">
-                            <a href="user_dashboard.html" class="btn btn-primary">Cancel</a>
+                            <button type="submit" class="btn btn-warning">Release Spot</button>
+                            <a href="/user_dashboard/{{ this_user.id }}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </div>
+                </form>
             </div>  
         </div>
+    </div>
 </body>
 </html>
