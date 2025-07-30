@@ -1,0 +1,172 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+    <div id="main">
+        <div id="canvas">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="/admin_dashboard">Welcome to {{this_user.first_name}}</a>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin_dashboard">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/users">Users</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/search">Search</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin_summary">Summary</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/login">Logout</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/edit_profile/{{this_user.id}}">Edit profile</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <div id="content">
+                <form class="d-flex justify-content-center mx-5 mb-4 mt-4">
+                    <select class="form-select me-2" style="max-width: 250px;" name="search_by">
+                            <option value="user_id" {% if search_by == 'user_id' %}selected{% endif %}>User ID</option>
+                            <option value="user_name" {% if search_by == 'user_name' %}selected{% endif %}>User Name</option>
+                            <option value="user_email" {% if search_by == 'user_email' %}selected{% endif %}>User Email</option>
+                            <option value="user_vehicle" {% if search_by == 'user_vehicle' %}selected{% endif %}>User Vehicle</option>
+                            <option value="parking_lot_id" {% if search_by == 'parking_lot_id' %}selected{% endif %}>Parking Lot ID</option>
+                            <option value="parking_lot_name" {% if search_by == 'parking_lot_name' %}selected{% endif %}>Parking Lot Name</option>
+                            <option value="parking_lot_address" {% if search_by == 'parking_lot_address' %}selected{% endif %}>Parking Lot Address</option>
+                            <option value="parking_lot_pincode" {% if search_by == 'parking_lot_pincode' %}selected{% endif %}>Parking Lot Pincode</option>
+                            <option value="parking_spot_id" {% if search_by == 'parking_spot_id' %}selected{% endif %}>Parking Spot ID</option>
+                            <option value="parking_spot_status" {% if search_by == 'parking_spot_status' %}selected{% endif %}>Parking Spot Status</option>
+                    </select>
+                    <input class="form-control me-2" type="search" placeholder="Select Search" name="search_string" value="{{ search_string }}">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </form>
+                {% if search_by and search_string %}
+                    {% if search_results.users %}
+                    <div class="mb-4">
+                        <h3 class="text-center headings">Users Found</h3>
+                        <div id="table">
+                            <table class="table border">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Full Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Vehicle Registration</th>
+                                        <th scope="col">Address</th>
+                                        <th scope="col">Pincode</th>
+                                        <th scope="col">Phone</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in search_results.users %}
+                                    <tr>
+                                        <th scope="row">{{ user.id }}</th>
+                                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+                                        <td>{{ user.email }}</td>
+                                        <td>{{ user.vehicle_reg }}</td>
+                                        <td>{{ user.address }}</td>
+                                        <td>{{ user.pincode }}</td>
+                                        <td>{{ user.phone_number }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if search_results.parking_lots %}
+                    <div class="mb-4">
+                        <h3 class="text-center headings">Parking Lots Found</h3>
+                        <div class="container my-4">
+                            <div class="row justify-content-center">
+                                {% for lot in search_results.parking_lots %}
+                                <div class="col-md-6 mb-4 d-flex justify-content-center">
+                                    <div class="card p-3 text-center" style="width: 100%; max-width: 400px;">
+                                    <h5><strong>{{lot.prime_location_name}}</strong></h5>
+                                    <div class="mb-2">
+                                        <a href="/edit_lot/{{ lot.id }}" class="nav-item">Edit</a>
+                                        <a href="/delete_lot/{{ lot.id }}" class="nav-item">Delete</a>
+                                    </div>
+                                    <div class="text mb-2">
+                                        (Occupied: {{ lot.occupied_spots }}/{{ lot.max_spots }})
+                                    </div>
+                                    <div class="d-flex flex-wrap justify-content-center mb-3">
+                                        {% for spot in lot.spots %}
+                                            {% if spot.status == 'occupied' %}
+                                            <a href="/delete_slot/{{ spot.id }}" class="text-decoration-none">
+                                                <div class="spot-box occupied">O</div>
+                                            </a>
+                                            {% else %}
+                                            <a href="/delete_slot/{{ spot.id }}" class="text-decoration-none">
+                                                <div class="spot-box available">A</div>
+                                            </a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if search_results.parking_spots %}
+                    <div class="mb-4">
+                        <h3 class="text-center headings">Parking Spots Found</h3>
+                        <div id="table">
+                            <table class="table border">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Spot ID</th>
+                                        <th scope="col">Lot ID</th>
+                                        <th scope="col">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for spot in search_results.parking_spots %}
+                                    <tr>
+                                        <th scope="row">{{ spot.id }}</th>
+                                        <td>{{ spot.lot_id }}</td>
+                                        <td>
+                                            <span class="spot {{ spot }}">
+                                                {{ spot.status }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if not search_results.users and not search_results.parking_lots and not search_results.parking_spots %}
+                    <div class="text-center">
+                        <h5><strong>No Results found as per the inputs provided</strong></h5>
+                    </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

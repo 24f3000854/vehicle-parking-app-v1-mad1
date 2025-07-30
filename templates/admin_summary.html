@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Summary</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+    <div id="main">
+        <div id="canvas">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="/admin_dashboard">Welcome to {{this_user.first_name}}</a>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin_dashboard">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/users">Users</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/search">Search</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin_summary">Summary</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/login">Logout</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/edit_profile/{{this_user.id}}">Edit profile</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            
+            <div id="content">
+                <h3 class="headings text-center">Vehicle Parking Summary</h3>
+                
+                <div class="justify-content-center">
+                    <div class="chart-section">
+                        <h3 class="headings text-center">Parking Spot Status</h3>
+                        <img src="/static/pie_chart.png" alt="Pie chart" class="chart-image">
+                    </div>
+                </div>
+                    <div class="chart-section">
+                        <h3 class="headings text-center">Revenue from Each Parking Lot</h3>
+                        <img src="/static/revenue_chart.png" alt="Revenue Chart" class="chart-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

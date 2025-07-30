@@ -12,29 +12,29 @@
         <div id="canvas">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">{{this_user.first_name}}, Welcome to User</a>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <a class="navbar-brand" href="/user_dashboard/{{this_user.id}}">{{this_user.first_name}}, Welcome to User</a>
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="">Home</a>
+                        <a class="nav-link" aria-current="page" href="/user_dashboard/{{this_user.id}}">Home</a>
                         </li>
                         <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Summary</a>
+                        <a class="nav-link" aria-current="page" href="/user_summary/{{this_user.id}}">Summary</a>
                         </li>
                         <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/login">Logout</a>
-                        </li>
-                        <li class="nav-item">
-                        <a class="nav-link" href="#">Edit profile</a>
+                        <a class="nav-link" aria-current="page" href="/login">Logout</a>
                         </li>
                     </ul>
-                    </div>
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                           <a class="nav-link" href="/edit_profile/{{this_user.id}}">Edit profile</a>
+                        </li>
+                    </ul>
                 </div>
             </nav>
             <div id="content">
                 <h3 class="headings text-center">Recent Parking History</h3>
                 <div id="table">
-                    <table class="table border">
+                    <table class="table border text-center">
                         <thead>
                             <tr>
                                 <th scope="col">ID</th>
@@ -42,7 +42,7 @@
                                 <th scope="col">Vehicle Number</th>
                                 <th scope="col">Timestamp</th>
                                 <th scope="col">Status</th>
-                                <th scope="col" class="text-center">Action</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -55,16 +55,16 @@
                                     <td>{{ reservation.timestamp }}</td>
                                     <td>
                                         {% if reservation.status == 'Active' %}
-                                            <span class="badge bg-success">Active</span>
+                                            <a>Active</a>
                                         {% else %}
-                                            <span class="badge bg-secondary">Completed</span>
+                                            <a>Completed</a>
                                         {% endif %}
                                     </td>
-                                    <td class="d-flex justify-content-center">
+                                    <td class="text-center">
                                         {% if reservation.status == 'Active' %}
                                             <a href="/release-spot/{{ this_user.id }}/{{ reservation.id }}" class="btn btn-warning mx-2">Release</a>
                                         {% else %}
-                                            <span class="text-muted">Completed</span>
+                                            <a>Parked Out</a>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -78,19 +78,39 @@
                     </table>
                 </div>
 
-                <form class="d-flex justify-content-center mx-5">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
+                <div class="container mt-4 mb-4">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <form method="GET" action="/user_dashboard/{{this_user.id}}" class="d-flex justify-content-center">
+                                <div class="input-group">
+                                    <input class="form-control" type="text" name="search_query" placeholder="Search by location or pincode..." value="{{ search_query }}" aria-label="Search">
+                                    <button class="btn btn-primary" type="submit">Search</button>
+                                    <a href="/user_dashboard/{{this_user.id}}" class="btn btn-outline-secondary">Clear</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
-                <h3 class="headings text-center">Parking Lots near you</h3>
+                <h3 class="headings text-center">
+                    {% if search_query %}
+                        {% if search_type == 'pincode' %}
+                            Parking Lots in Pincode "{{ search_query }}"
+                        {% else %}
+                            Parking Lots matching "{{ search_query }}"
+                        {% endif %}
+                    {% else %}
+                        Parking Lots in your area 
+                    {% endif %}
+                </h3>
                 <div id="table">
-                    <table class="table border">
+                    <table class="table border text-center">
                         <thead>
                             <tr>
                                 <th scope="col">Lot ID</th>
                                 <th scope="col">Location</th>
                                 <th scope="col">Address</th>
+                                <th scope="col">Pincode</th>
                                 <th scope="col">Available Spots</th>
                                 <th scope="col">Price/Hour</th>
                                 <th scope="col" class="text-center">Action</th>
@@ -103,15 +123,16 @@
                                     <th scope="row">{{ lot.id }}</th>
                                     <td>{{ lot.prime_location_name }}</td>
                                     <td>{{ lot.address }}</td>
+                                    <td>{{ lot.pin_code }}</td>
                                     <td>
                                         {% if lot.available_spots > 0 %}
-                                            <span class="badge bg-success">{{ lot.available_spots }}/{{ lot.total_spots }}</span>
+                                            <a>{{ lot.available_spots }}/{{ lot.total_spots }}</a>
                                         {% else %}
-                                            <span class="badge bg-danger">Full</span>
+                                            <a>Occupied</a>
                                         {% endif %}
                                     </td>
                                     <td>₹{{ lot.price }}</td>
-                                    <td class="d-flex justify-content-center">
+                                    <td class="text-center">
                                         {% if lot.available_spots > 0 %}
                                             <a href="/book-spot/{{ this_user.id }}/{{ lot.id }}" class="btn btn-primary mx-2">Book</a>
                                         {% else %}
@@ -122,7 +143,13 @@
                                 {% endfor %}
                             {% else %}
                                 <tr>
-                                    <td colspan="6" class="text-center">No parking lots found in your pincode ({{ this_user.pincode }})</td>
+                                    <td colspan="7" class="text-center">
+                                        {% if search_query %}
+                                            No parking lots found for "{{ search_query }}"
+                                        {% else %}
+                                            No parking lots found in your area ({{ this_user.pincode }})
+                                        {% endif %}
+                                    </td>
                                 </tr>
                             {% endif %}
                         </tbody>                        

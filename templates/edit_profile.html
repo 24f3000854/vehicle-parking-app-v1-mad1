@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<style>
+    #form-body {
+        max-width: 600px;
+    }
+</style>
+<body>
+    <div id="main">
+        <div id="canvas">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="/admin_dashboard">Welcome to {{this_user.first_name}}</a>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin_dashboard">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/users">Users</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/search">Search</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin_summary">Summary</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/login">Logout</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/edit_profile/{{this_user.id}}">Edit profile</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <h3 class="text-center headings">Edit Profile</h3>
+            <div id="form-body">
+
+                <form action="/edit_profile/{{ this_user.id }}" method="POST">
+
+                    <div class="mb-3 row">
+                        <div class="col">
+                            <label for="first_name" class="form-label">First Name:</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ this_user.first_name }}" required>
+                        </div>
+                        <div class="col">
+                            <label for="last_name" class="form-label">Last Name:</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ this_user.last_name }}" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ this_user.email }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicle_reg" class="form-label">Vehicle Registration:</label>
+                        <input type="text" class="form-control" id="vehicle_reg" name="vehicle_reg" value="{{ this_user.vehicle_reg }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address:</label>
+                        <input type="text" class="form-control" id="address" name="address" value="{{ this_user.address }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pincode" class="form-label">Pincode:</label>
+                        <input type="text" class="form-control" id="pincode" name="pincode" value="{{ this_user.pincode }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">Phone Number:</label>
+                        <input type="tel" class="form-control" id="phone_number" name="phone_number" value="{{ this_user.phone_number }}" required>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col">
+                            <label for="gender" class="form-label">Gender:</label>
+                            <select class="form-control" id="gender" name="gender">
+                                <option value="Male" {% if this_user.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if this_user.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if this_user.gender == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="age" class="form-label">Age:</label>
+                            <input type="number" class="form-control" id="age" name="age" value="{{ this_user.age }}">
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                        {% if this_user.type == 'admin' %}
+                            <a href="/admin_dashboard" class="btn btn-secondary">Cancel</a>
+                        {% else %}
+                            <a href="/user_dashboard/{{ this_user.id }}" class="btn btn-secondary">Cancel</a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

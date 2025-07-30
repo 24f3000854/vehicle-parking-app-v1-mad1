@@ -12,77 +12,78 @@
         <div id="canvas">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">Welcome to {{this_user.first_name}}</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                    </button>
+                    <a class="navbar-brand" href="/admin_dashboard">Welcome to {{this_user.first_name}}</a>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                        </li>
-                        <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Users</a>
-                        </li>
-                        <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Search</a>
-                        </li>
-                        <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Summary</a>
-                        </li>
-                        <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/login">Logout</a>
-                        </li>
-                        <li class="nav-item">
-                        <a class="nav-link" href="#">Edit profile</a>
-                        </li>
-                    </ul>
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin_dashboard">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/users">Users</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/search">Search</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin_summary">Summary</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/login">Logout</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/edit_profile/{{this_user.id}}">Edit profile</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </nav>
             <div id="content">
                 <h3 class="headings text-center">Parking Lots</h3>
-                
                 {% if parking_lots %}
-                    <div class="container my-4">
+                <div class="container my-4">
+                    <div class="row justify-content-center gx-4 gy-4">
                         {% for lot in parking_lots %}
-                        <div class="card p-3 text-center mb-3" style="max-width: 400px; margin: auto;">
-                            <h5><strong>{{lot.prime_location_name}}</strong></h5>
-                            <p class="text-muted">{{lot.address}}</p>
-                            <div class="mb-2">
-                                <a href="#" class="text-warning">Edit</a> |
-                                <a href="#" class="text-danger">Delete</a>
-                            </div>
-                            <div class="text-success mb-2">
-                                (Occupied: {{ lot.occupied_spots }}/{{ lot.max_spots }})
-                            </div>
-                            <div class="d-flex flex-wrap justify-content-center mb-3">
-                                {% for spot in lot.spots %}
-                                    {% if spot.status == 'occupied' %}
-                                        <div class="spot-box occupied">O</div>
-                                    {% else %}
-                                        <div class="spot-box available">A</div>
-                                    {% endif %}
-                                {% endfor %}
+                        <div class="col-md-6">
+                            <div class="card p-3 text-center h-100">
+                                <h5><strong>{{ lot.prime_location_name }}</strong></h5>
+                                <div class="mb-2">
+                                    <a href="/edit_lot/{{ lot.id }}" class="nav-item">Edit</a>
+                                    <a href="/delete_lot/{{ lot.id }}" class="nav-item">Delete</a>
+                                </div>
+                                <div class="text-success mb-2">
+                                    (Occupied: {{ lot.occupied_spots }}/{{ lot.total_spots }})
+                                </div>
+                                <div class="d-flex flex-wrap justify-content-center mb-3">
+                                    {% for spot in lot.spots %}
+                                        {% if spot.status == 'occupied' %}
+                                            <a href="/delete_slot/{{ spot.id }}" class="text-decoration-none">
+                                                <div class="spot-box occupied">O</div>
+                                            </a>
+                                        {% else %}
+                                            <a href="/delete_slot/{{ spot.id }}" class="text-decoration-none">
+                                                <div class="spot-box available">A</div>
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
                     </div>
+                </div>
                 {% else %}
-                    <div class="container my-4">
-                        <div class="card p-3 text-center" style="max-width: 300px; margin: auto;">
-                            <h5><strong>No Parking Lots Yet</strong></h5>
-                            <p class="text-muted">Add your first parking lot to get started!</p>
-                        </div>
+                <div class="container my-4">
+                    <div class="card p-3 text-center" style="max-width: 300px; margin: auto;">
+                        <h5><strong>No Parking Lots Added</strong></h5>
                     </div>
+                </div>
                 {% endif %}
-                
                 <div class="text-center">
                     <a href="/new-lot" class="btn btn-primary">Add Lot</a><br>
                 </div>
             </div>
-
-            
         </div>
     </div>
 </body>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Parking Spot</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+</head>
+<body>
+    <div id="main">
+        <div id="canvas">
+            <div id="content">
+                <h3 class="headings text-center">Parking Spot Details</h3>
+                <div id="form-body">
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Spot ID:</strong></label>
+                        <input type="text" class="form-control" value="{{ spot.id }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Location:</strong></label>
+                        <input type="text" class="form-control" value="{{ lot.prime_location_name }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Address:</strong></label>
+                        <input type="text" class="form-control" value="{{ lot.address }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Status:</strong></label>
+                        {% if spot.status == 'occupied' %}
+                            <a href="/occupied_details/{{ spot.id }}" class="text-decoration-none">
+                                <input type="text" class="form-control" value="{{ spot.status }}" readonly style="cursor: pointer; background-color: #f8f9fa;">
+                            </a>
+                        {% else %}
+                            <input type="text" class="form-control" value="{{ spot.status }}" readonly>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Lot ID:</strong></label>
+                        <input type="text" class="form-control" value="{{ spot.lot_id }}" readonly>
+                    </div>
+                    <div class="text-center">
+                        {% if spot.status == 'occupied' %}
+                            <div class="text-center"><strong>
+                                This spot is occupied.  </strong><br><a href="/occupied_details/{{ spot.id }}">details here</a> 
+                            </div><br>
+                            <a href="/admin_dashboard" class="btn btn-primary">Back</a>
+                        {% else %}
+                            <form method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-danger me-2">Delete</button>
+                                <a href="/admin_dashboard" class="btn btn-secondary">Cancel</a>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
