@@ -17,6 +17,19 @@ import os
 def home():
     return render_template('main.html')
 
+@app.route("/index", methods=["GET", "POST"])
+def index():
+    date = request.form.get("date")
+    list_of_users = User.query.filter_by(type='user').all()
+
+    for _ in list_of_users:
+        date_by_user = User.parking_timestamp = datetime.utcnow() + timedelta(hours=5, minutes=30)
+        if date_by_user == date:
+            return render_template("index.html", list_of_users=list_of_users, date=date)
+    return render_template("index.html", list_of_users=list_of_users, date=None)
+
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -341,8 +354,24 @@ def edit_lot(lot_id):
         lot.address = request.form.get("address")
         lot.pin_code = request.form.get("pin_code")
         lot.price = float(request.form.get("price"))
-        lot.max_spots = int(request.form.get("max_spots"))
-        
+        new_max_spots = int(request.form.get("max_spots"))
+
+        current_max_spots = lot.max_spots
+        lot.max_spots = new_max_spots
+
+        if new_max_spots > current_max_spots:
+            for _ in range(current_max_spots, new_max_spots):
+                spot = ParkingSpot(lot_id=lot.id, status="available")
+                db.session.add(spot)
+
+        elif new_max_spots < current_max_spots:
+            spots_to_remove = ParkingSpot.query.filter_by(
+                lot_id=lot.id, status="available"
+            ).limit(current_max_spots - new_max_spots).all()
+
+            for spot in spots_to_remove:
+                db.session.delete(spot)
+
         db.session.commit()
         return redirect("/admin_dashboard")
     

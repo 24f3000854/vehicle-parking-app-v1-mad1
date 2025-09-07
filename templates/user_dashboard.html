@@ -10,7 +10,7 @@
 <body>
     <div id="main">
         <div id="canvas">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
                 <div class="container-fluid">
                     <a class="navbar-brand" href="/user_dashboard/{{this_user.id}}">{{this_user.first_name}}, Welcome to User</a>
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -100,7 +100,7 @@
                             Parking Lots matching "{{ search_query }}"
                         {% endif %}
                     {% else %}
-                        Parking Lots in your area 
+                        Parking Lots in your area ({{ this_user.pincode }})
                     {% endif %}
                 </h3>
                 <div id="table">

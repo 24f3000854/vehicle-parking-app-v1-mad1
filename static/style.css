@@ -1,6 +1,9 @@
 *{
     margin: 0px;
 }
+#main{
+    background-color: bisque;
+}
 #main, canvas {
     border: 2px solid black;
     margin-top: 10px;
@@ -11,8 +14,9 @@
     width: 60%;
     margin: auto;
     min-height: 100vh;
-    border: 1px solid black;
+    border: 1px solid #000000;
     padding-bottom: 20px;
+    background-color: whitesmoke;
 }
 #form-body {
     max-width: 400px;
@@ -24,6 +28,19 @@
     border-radius: 20px;
     background-color: #fff;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-custom {
+  background-color:#2C3E50!important;
+}
+
+.navbar-custom .nav-link,
+.navbar-custom .navbar-brand {
+  color: #ffffff !important; /* White text */
+}
+
+.navbar-custom .nav-link:hover {
+  color: #2d3afd !important; /* Gold/yellow hover accent (optional) */
 }
 
 .headings{
