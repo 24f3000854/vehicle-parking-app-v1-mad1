@@ -12,6 +12,7 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key")
 
+    #for vercel deployment
     temp_instance_path = "/tmp/vehicle-parking-instance"
     os.makedirs(temp_instance_path, exist_ok=True)
     app.instance_path = temp_instance_path
@@ -27,7 +28,7 @@ def create_app():
 app = create_app()
 app.app_context().push()
 
-from application.controllers import *
+import application.controllers
 
 
 if __name__ == "__main__":
