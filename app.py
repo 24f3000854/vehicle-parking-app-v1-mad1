@@ -11,6 +11,11 @@ def create_app():
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key")
+
+    temp_instance_path = "/tmp/vehicle-parking-instance"
+    os.makedirs(temp_instance_path, exist_ok=True)
+    app.instance_path = temp_instance_path
+
     db.init_app(app)
 
     with app.app_context():
