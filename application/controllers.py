@@ -7,11 +7,17 @@ from .database import db
 from sqlalchemy import or_
 # Importing the models to use in the controllers
 from datetime import datetime, timedelta
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import numpy as np
 import os
+
+try:
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    import numpy as np
+except Exception:
+    matplotlib = None
+    plt = None
+    np = None
 
 @app.route('/')
 def home():
@@ -480,70 +486,71 @@ def admin_summary():
     sizes = [available_spots, occupied_spots]
     colors = ["green", "red"]
 
-    if sum(sizes) > 0:      # start creating charts only if there are spots
-        plt.figure(figsize=(8, 6))
-        plt.pie(sizes, labels=labels, colors=colors, autopct="%1.1f%%", startangle=90)
-        plt.title("Parking Spot Status")
-        plt.axis('equal')
-        plt.savefig("static/pie_chart.png", dpi=300, bbox_inches='tight')
+    if plt is not None and np is not None:
+        if sum(sizes) > 0:      # start creating charts only if there are spots
+            plt.figure(figsize=(8, 6))
+            plt.pie(sizes, labels=labels, colors=colors, autopct="%1.1f%%", startangle=90)
+            plt.title("Parking Spot Status")
+            plt.axis('equal')
+            plt.savefig("static/pie_chart.png", dpi=300, bbox_inches='tight')
+            plt.clf()
+        else:
+            plt.figure(figsize=(8, 6)) #empty ones
+            plt.pie([1], labels=['No Data'], colors=['gray'], autopct="%1.1f%%")
+            plt.title("Parking Spot Status")
+            plt.axis('equal')
+            plt.savefig("static/pie_chart.png", dpi=300, bbox_inches='tight')
+            plt.clf()
+
+        plt.figure(figsize=(10, 6))
+        plt.bar(labels, sizes, color=colors)
+        plt.xlabel("Parking Spot Status")
+        plt.ylabel("Number of Spots")
+        plt.title("Parking Spot Distribution")
+        plt.savefig("static/bar_chart.png", dpi=300, bbox_inches='tight')
         plt.clf()
-    else:
-        plt.figure(figsize=(8, 6)) #empty ones
-        plt.pie([1], labels=['No Data'], colors=['gray'], autopct="%1.1f%%")
-        plt.title("Parking Spot Status")
-        plt.axis('equal')
-        plt.savefig("static/pie_chart.png", dpi=300, bbox_inches='tight')
-        plt.clf()
 
-    plt.figure(figsize=(10, 6))
-    plt.bar(labels, sizes, color=colors)
-    plt.xlabel("Parking Spot Status")
-    plt.ylabel("Number of Spots")
-    plt.title("Parking Spot Distribution")
-    plt.savefig("static/bar_chart.png", dpi=300, bbox_inches='tight')
-    plt.clf()
+        parking_lots = ParkingLot.query.all()
+        lot_names = []
+        lot_revenues = []
 
-    parking_lots = ParkingLot.query.all()
-    lot_names = []
-    lot_revenues = []
+        for lot in parking_lots:
+            lot_names.append(lot.prime_location_name)
+            completed_reservations = Reservation.query.join(ParkingSpot).filter(
+                ParkingSpot.lot_id == lot.id,
+                Reservation.leaving_timestamp.isnot(None)
+            ).all()
 
-    for lot in parking_lots:
-        lot_names.append(lot.prime_location_name)
-        completed_reservations = Reservation.query.join(ParkingSpot).filter(
-            ParkingSpot.lot_id == lot.id,
-            Reservation.leaving_timestamp.isnot(None)
-        ).all()
+            lot_revenue = 0
+            for reservation in completed_reservations:
+                try:
+                    duration = (reservation.leaving_timestamp - reservation.parking_timestamp).total_seconds() / 3600
+                    if not np.isnan(duration) and duration > 0:
+                        lot_revenue += reservation.cost_per_unit_time * duration
+                except Exception:
+                    continue
 
-        lot_revenue = 0
-        for reservation in completed_reservations:
-            try:
-                duration = (reservation.leaving_timestamp - reservation.parking_timestamp).total_seconds() / 3600
-                if not np.isnan(duration) and duration > 0:
-                    lot_revenue += reservation.cost_per_unit_time * duration
-            except:
-                continue
+            lot_revenues.append(round(lot_revenue, 2))
 
-        lot_revenues.append(round(lot_revenue, 2))
-
-    if lot_names and any(revenue > 0 for revenue in lot_revenues):
-        plt.figure(figsize=(12, 6))
-        plt.bar(lot_names, lot_revenues, color='blue', alpha=0.7)
-        plt.xlabel("Parking Lots")
-        plt.ylabel("Revenue in ₹")
-        plt.title("Revenue from Each Parking Lot")
-        plt.xticks(rotation=45)
-        plt.tight_layout()
-        plt.savefig("static/revenue_chart.png", dpi=300, bbox_inches='tight')
-        plt.clf()
-    else:
-        plt.figure(figsize=(12, 6))    #empty ones
-        plt.bar(['No Revenue Data'], [1], color='gray', alpha=0.7)
-        plt.xlabel("Parking Lots")
-        plt.ylabel("Revenue in ₹")
-        plt.title("Revenue from Each Parking Lot")
-        plt.tight_layout()
-        plt.savefig("static/revenue_chart.png", dpi=300, bbox_inches='tight')
-        plt.clf()
+        if lot_names and any(revenue > 0 for revenue in lot_revenues):
+            plt.figure(figsize=(12, 6))
+            plt.bar(lot_names, lot_revenues, color='blue', alpha=0.7)
+            plt.xlabel("Parking Lots")
+            plt.ylabel("Revenue in ₹")
+            plt.title("Revenue from Each Parking Lot")
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+            plt.savefig("static/revenue_chart.png", dpi=300, bbox_inches='tight')
+            plt.clf()
+        else:
+            plt.figure(figsize=(12, 6))    #empty ones
+            plt.bar(['No Revenue Data'], [1], color='gray', alpha=0.7)
+            plt.xlabel("Parking Lots")
+            plt.ylabel("Revenue in ₹")
+            plt.title("Revenue from Each Parking Lot")
+            plt.tight_layout()
+            plt.savefig("static/revenue_chart.png", dpi=300, bbox_inches='tight')
+            plt.clf()
 
     return render_template("admin_summary.html", available=available_spots, occupied=occupied_spots, total_lots=total_lots, this_user=this_user) 
 
@@ -572,18 +579,19 @@ def user_summary(user_id):
             costs.append(0)
             spot_labels.append(f"#{idx + 1}")
 
-    plt.figure(figsize=(10, 5))
-    bars = plt.bar(spot_labels, costs, color='skyblue')
-    plt.xlabel("Parking Session")
-    plt.ylabel("Cost in ₹")
-    plt.title("Previous Parking Session Costs")
-    plt.tight_layout()
+    if plt is not None:
+        plt.figure(figsize=(10, 5))
+        bars = plt.bar(spot_labels, costs, color='skyblue')
+        plt.xlabel("Parking Session")
+        plt.ylabel("Cost in ₹")
+        plt.title("Previous Parking Session Costs")
+        plt.tight_layout()
 
-    for bar, val in zip(bars, costs):
-        plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), f"{val}", ha='center', va='bottom')
+        for bar, val in zip(bars, costs):
+            plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), f"{val}", ha='center', va='bottom')
 
-    static_path = os.path.join(app.root_path, 'static', 'user_bar.png')
-    plt.savefig(static_path)
-    plt.close()
+        static_path = os.path.join(app.root_path, 'static', 'user_bar.png')
+        plt.savefig(static_path)
+        plt.close()
 
     return render_template("user_summary.html", this_user=this_user, total_cost=round(total_cost, 2))
